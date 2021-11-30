@@ -1,0 +1,70 @@
+{% extends 'pages/base.html' %}
+
+{% block title %}
+Hảo Coder: Kỳ thi
+{% endblock %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/hcbadge.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/hccolor.css' %}">
+
+<div class="container">
+	<div class="row justify-content-lg-center">
+		<div class="col-12">
+			<div class="table-responsive" style="border: 2px solid #d0d0d0; padding: 30px; border-radius: 24px; background-color: white;">
+				<h2 style="font-weight: bold;">Các kỳ thi sắp tới</h2><br>
+				{% if contest %}
+				<table class="table">
+					<thead>
+						<tr>
+							<th scope="col">Tên kỳ thi</th>
+							<th scope="col" style="text-align: center; width: 79px;">Thí sinh</th>
+							<th scope="col" style="width: 150px;"></th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for con in contest %}
+						<tr>
+							<td scope="row" style="vertical-align: middle;">
+								<div>
+									<label style="font-weight: bold; font-size: 22px;">
+										<a href="/contest/{{ con.contest_id }}/" style="text-decoration: none;">{{ con.contest_title }}</a>
+										{% if con.contest_rated %}
+										<span class="hc-badge hc-bg-red" style="padding: 7px; font-size: 16px; vertical-align: middle;">Rated</span>
+										{% endif %}
+									</label>
+									
+									<p style="color: gray;">
+										Bắt đầu lúc: {{ con.contest_schedule|date:"H:i" }} ngày {{ con.contest_schedule|date:"d/m/Y" }}
+										<br>
+										Thời gian làm bài: {{ con.contest_long }}
+										<br>
+										Dạng kỳ thi: {{ con.contest_format }}
+									</p>
+								</div>
+							</td>
+							<td scope="row" style="vertical-align: middle; text-align: center;">{{ con.contestant_count }}</td>
+							<td scope="row" style="vertical-align: middle; text-align: center;">
+								<button id="join-button-{{ forloop.counter }}" type="button" class="btn btn-primary" style="{% if user_registered %}background-color: red;{% endif %} border: none; border-radius: 12px; font-weight: bold;" {% if not user.is_authenticated or con.contest_status != "SCHEDULE" %}disabled{% endif %}>
+									{% if con.contest_status == "SCHEDULE" %}
+									Tham gia
+									{% elif con.contest_status == "RUNNING" %}
+									Đang diễn ra
+									{% endif %}
+								</button>
+							</td>
+							{% if con.contest_status == "SCHEDULE" %}
+							<script type="text/javascript">var $data_{{ forloop.counter }}="/contest/{{ con.contest_id }}/register/";$(document).ready(function(){$.ajax({url:"/contest/{{ con.contest_id }}/register/check/",type:"POST",data:{csrfmiddlewaretoken:"{{ csrf_token }}"}}).done(function(result){if(result['joined']==true){$("#join-button-{{ forloop.counter }}").css({"background-color": "red"});$("#join-button-{{ forloop.counter }}").text("Hủy tham gia");$data_{{ forloop.counter }}=$data_{{ forloop.counter }}.replace("register","unregister");}});});$("#join-button-{{ forloop.counter }}").click(function(){$.ajax({url:$data_{{ forloop.counter }},type:"POST",data:{csrfmiddlewaretoken:"{{ csrf_token }}"},timeout:30000}).done(function(result){location.reload();});});</script>
+							{% endif %}
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+				{% else %}
+				<label>Hiện tại không có kỳ thi nào sắp diễn ra.</label>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+</div>{% endblock %}

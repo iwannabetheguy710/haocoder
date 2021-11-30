@@ -1,0 +1,64 @@
+{% extends 'pages/base.html' %}
+
+{% block title %}
+Hảo Coder: Đăng nhập
+{% endblock %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/hcbox.css' %}">
+
+<div class="container">
+	<div class="row justify-content-lg-center">
+		<div class="col-9" style="font-size: 20px;">
+			<form id="login-form">
+				<div class="mb-3">
+					<label class="form-label">Tên đăng nhập (tên tài khoản)</label>
+					<input id="usr-name" type="text" class="form-control" placeholder="Tên đăng nhập của bạn">
+				</div>
+				<div class="mb-3">
+					<label class="form-label">Mật khẩu</label>
+					<input id="usr-pass" type="password" class="form-control" placeholder="Mật khẩu">
+				</div>
+				<div id="login-err"></div>
+				<div class="text-center">
+					<button id="login-button" type="button" class="btn btn-primary" style="border: none; border-radius: 12px; height: 45px;">Đăng nhập</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+function login_background() {
+	$.ajax({
+		url: "/login/",
+		type: "POST",
+		data: {
+			csrfmiddlewaretoken: "{{ csrf_token }}",
+			username: $("#usr-name").val(),
+			password: $("#usr-pass").val()
+		}
+	}).done(function(result) {
+		console.log(result);
+		if (result['done'])
+			location.href = "/";
+		if (result['err-title']) {
+			var dom = `<div class="hc-err-box">
+				<label style="font-size: 20px;">` + result['err-title'] + `</label>
+				<p style="font-size: 16px;">` + result['err-description'] + `</p>
+			</div><br>`;
+			$("#login-err").html(dom);
+		}
+	});
+}
+</script>
+<script type="text/javascript">
+$("#login-button").click(login_background);
+$("input").bind("keypress", function(e) {
+	var c = e.keyCode || e.which;
+	if (c == 13) {
+		login_background();
+	}
+});
+</script>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends 'pages/base.html' %}
+
+{% block title %}
+Hảo Coder: Bảng xếp hạng {{ contest.contest_title }}
+{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load martortags %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/hcbadge.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/hccolor.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/hcbox.css' %}">
+
+<div class="container">
+	<div class="row justify-content-lg-center">
+		<div class="col-12">
+			<div style="border: 2px solid #d0d0d0; border-radius: 24px; padding: 30px; background-color: white;">
+				<div>
+					<span style="color: #006eff;">
+						<a href="/contest/{{ contest.contest_id }}/" style="text-decoration: none;">
+							<i class="fas fa-arrow-left"></i>
+							 Trở về trang chủ kỳ thi
+						</a>
+					</span>
+				</div>
+				<h3 style="font-weight: bold; text-align: center;">
+					{{ contest.contest_title }}
+					<br><br>
+					Bảng xếp hạng
+				</h3>
+				{% if contest %}
+				<div class="table-responsive">
+					<table class="table">
+						<thead>
+							<tr>
+								<th scope="col" style="text-align: center; width: 70px;">STT</th>
+								<th scope="col">Thí sinh</th>
+								{% for p in problem %}
+								{% if contest.contest_status == "SCHEDULE" %}
+								<th scope="col" style="text-align: center; width: 80px;">{{ p.contest_problem_id }}</th>
+								{% else %}
+								<th scope="col" style="text-align: center; width: 80px;"><a href="/contest/{{ contest.contest_id }}/problem/{{ p.problem_id }}/" style="text-decoration: none;">{{ p.contest_problem_id }}</a></th>
+								{% endif %}
+								{% endfor %}
+								<th scope="col" style="text-align: center; width: 100px;">Điểm</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for brow in leaderboard %}
+							<tr style="font-weight: bold; height: 70px;" class="hc-raised-tb-row">
+								<td scope="row" style="text-align: center; vertical-align: middle;">{{ forloop.counter }}</td>
+								<td scope="row" style="vertical-align: middle; font-weight: bold; color: {{ brow.profile.color }};">
+								<a href="/profile/{{ brow.profile }}/" style="text-decoration: none;">
+									{% for k, v in role_code.items %}
+									{% if brow.profile.role == k %}
+									<span class="hc-badge" style="font-size: 14px; background-color: {{ brow.profile.color }};">{{ v }}</span>
+									{% endif %}
+									{% endfor %}
+									<span style="color: {{ brow.profile.color }};">{{ brow.profile }}</span>
+								</a>
+								</td>
+								{% for p in problem %}
+								<td scope="row" style="text-align: center; vertical-align: middle;">0.00</td>
+								{% endfor %}
+								<td scope="row" style="text-align: center; vertical-align: middle;">{{ brow.total_score }}</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'pages/base.html' %}
+
+{% block title %}
+Hảo Coder: 404 Không tìm thấy trang
+{% endblock %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/hcbadge.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/hcbox.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/hccolor.css' %}">
+
+<div class="container">
+	<div class="row justify-content-lg-center">
+		<div class="col-12">
+			<div class="hc-err-box">
+				<label style="font-size: 20px;">Ây da, vị huynh đài đang tính làm gì vậy ?</label><br><br>
+				<p style="font-size: 16px;">{{ err_msg }}</p>
+			</div>
+		</div>
+	</div>
+</div>{% endblock %}

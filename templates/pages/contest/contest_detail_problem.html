@@ -1,0 +1,99 @@
+{% extends 'pages/base.html' %}
+
+{% block title %}
+Hảo Coder: {{ problem.problem_title }}
+{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load martortags %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/hcbadge.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/hccolor.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/hcbox.css' %}">
+
+<link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/bootstrap-select.min.css' %}">
+<script type="text/javascript" src="{% static 'bootstrap/js/bootstrap-select.min.js' %}"></script>
+
+<div class="container">
+	<div class="row justify-content-lg-center">
+		<div class="col-12">
+			<div style="border: 2px solid #d0d0d0; border-radius: 24px; padding: 30px; background-color: white;">
+				<div>
+					<span style="color: #006eff;">
+						<a href="/contest/{{ contest.contest_id }}/problem/" style="text-decoration: none;">
+							<i class="fas fa-arrow-left"></i>
+							 Trở về danh sách đề thi
+						</a>
+					</span>
+					<span style="float: right;color: #006eff;"><a href="/contest/{{ contest.contest_id }}/leaderboard/" style="text-decoration: none;">
+						Xem bảng xếp hạng 
+						<i class="fas fa-arrow-right"></i>
+					</a></span>
+				</div>
+				<h3 style="font-weight: bold; text-align: center;">
+					{{ contest.contest_title }}
+					<br><br>
+					Đề bài: {{ problem.problem_title }}
+				</h3>
+				<br>
+				<div id="problem-content" style="font-size: 18px;">
+					<ul>
+						<li>Giới hạn thời gian chương trình: {{ problem.problem_time_limit }}s</li>
+						<li>Giới hạn bộ nhớ chương trình: {{ problem.problem_memory_limit }} MB</li>
+						<li>
+							Tác giả: <span style="font-weight: bold; color: {{ problem.profile.color }};">
+								{% for k, v in role_code.items %}
+								{% if k == problem.profile.role %}
+								<span class="hc-badge" style="font-size: 14px; background-color: {{ problem.profile.color }};">{{ v }}</span>
+								{% endif %}
+								{% endfor %}
+								{{ problem.profile }}
+							</span>
+						</li>
+					</ul>
+					<p>{{ problem.problem_description|safe_markdown }}</p>
+					<br><br>
+					{% for i in problem.problem_sample_in %}
+					<h2 style="font-weight: bold;">Ví dụ {{ forloop.counter }}</h2>
+					<ul>
+						<li>
+							<h4>Input <span><button id="copy-button-{{ forloop.counter }}" class="btn hc-sample-copy-btn" type="button">Copy</button></span></h4>
+							<pre style="vertical-align: middle;">{{ i.0 }}</pre>
+							<script type="text/javascript">$("#copy-button-{{ forloop.counter }}").click(function(){navigator.clipboard.writeText("{{ i.0 }}");$("#copy-button-{{ forloop.counter }}").text("Copied");});$("#copy-button-{{ forloop.counter }}").mouseout(function(){setTimeout(function(){$("#copy-button-{{ forloop.counter }}").text("Copy");},3000);});</script>
+						</li>
+						<li class="hover-copy">
+							<h4>Output <button id="copy-button-{{ forloop.counter }}-1" class="btn hc-sample-copy-btn" type="button">Copy</button></h4>
+							<pre>{{ i.1 }}</pre>
+							<script type="text/javascript">$("#copy-button-{{ forloop.counter }}-1").click(function(){navigator.clipboard.writeText("{{ i.1 }}");$("#copy-button-{{ forloop.counter }}-1").text("Copied");});$("#copy-button-{{ forloop.counter }}-1").mouseout(function(){setTimeout(function(){$("#copy-button-{{ forloop.counter }}-1").text("Copy");},3000);});</script>
+						</li>
+					</ul>
+					{% endfor %}
+					<br>
+					<div class="dropdown-divider"></div>
+					<br>
+					<h2 style="font-weight: bold;">Nộp bài</h2>
+					<form>
+						<div id="editor" class="hc-raised-box"></div>
+						<br>
+						<button class="btn btn-primary" style="float: right; border: none; border-radius: 12px; box-shadow: 5px 5px 5px gray;">Nộp bài</button>
+						<select id="lang-select" class="form-select" style="width: 250px; float: right; margin: auto 10px; border-radius: 12px; height: 35px; padding: 0px 15px; border: 1px solid #d0d0d0;">
+							<option selected>Chọn ngôn ngữ</option>
+							<option value="c">C</option>
+							<option value="cpp">C++</option>
+							<option value="csharp">C#</option>
+							<option value="java">Java</option>
+							<option value="python">Python</option>
+							<option value="ruby">Ruby</option>
+						</select>
+					</form>
+				</div>
+				<br><br>
+			</div>
+		</div>
+	</div>
+</div>
+{% load static %}
+<script type="text/javascript" src="{% static 'ace/ace.js' %}" charset="utf-8"></script>
+<script type="text/javascript">var editor = ace.edit("editor");</script>
+<style type="text/css">#editor{border:1px solid #d0d0d0;display:grid;border-radius:18px;position:relative;height:400px;width:1050px;}</style>
+{% endblock %}

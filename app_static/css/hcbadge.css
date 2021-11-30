@@ -1,0 +1,9 @@
+.hc-badge {
+	text-align: center;
+	font-weight: bold;
+	padding: 5px;
+	border: none;
+	border-radius: 8px;
+	font-size: 20px;
+	color: white;
+}

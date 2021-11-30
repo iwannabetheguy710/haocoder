@@ -1,0 +1,36 @@
+.hc-err-box {
+	padding: 30px;
+	border-radius: 24px;
+	border: 2px solid red;
+	background-color: #ff6969;
+}
+.hc-done-box {
+	padding: 30px;
+	border-radius: 24px;
+	border: 2px solid green;
+	background-color: #61ff64;
+}
+.hc-raised-box {
+	transition: box-shadow 0.4s;
+}
+.hc-raised-box:hover {
+	border: 1px solid white;
+	box-shadow: 0px 0px 10px black;
+}
+.hc-raised-tb-row {
+	transition: box-shadow 0.4s;
+}
+.hc-raised-tb-row:hover {
+	box-shadow: 0px 0px 20px gray;
+}
+
+.hc-sample-copy-btn {
+	font-family: Montserrat Regular;
+	font-weight: bold;
+	border-radius: 12px;
+	border: none;
+	vertical-align: middle;
+	margin: 0px 10px;
+	box-shadow: 0px 0px 10px gray;
+	display: inline-block;
+}

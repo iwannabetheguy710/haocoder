@@ -1,0 +1,59 @@
+{% extends 'pages/base.html' %}
+
+{% block title %}
+Hảo Coder: {{ contest.contest_title }}
+{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load martortags %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/hcbadge.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/hccolor.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/hcbox.css' %}">
+
+<div class="container">
+	<div class="row justify-content-lg-center">
+		<div class="col-12">
+			<div style="border: 2px solid #d0d0d0; border-radius: 24px; padding: 30px; background-color: white;">
+				<h1 style="text-align: center; font-weight: bold;">
+					{{ contest.contest_title }}
+					{% if contest.contest_rated %}
+					<span class="hc-badge hc-bg-red" style="padding: 5px; vertical-align: middle;">Rated</span>
+					{% endif %}
+				</h1>
+				<br>
+				<ul style="font-size: 18px;">
+					<li>Thời gian bắt đầu: {{ contest.contest_schedule|date:"H:i d/m/Y" }}</li>
+					<li>Thời gian làm bài: {{ contest.contest_long }}</li>
+					<li>Dạng kỳ thi: {{ contest.contest_format }}</li>
+					<li>Kỳ thi được tính hệ số cho các bạn có hệ số trong khoảng {{ contest.contest_rating_range }}</li>
+				</ul>
+				{% if not user_registered and user.is_authenticated and contest.contest_status == "SCHEDULE" %}
+				<div  style="border: 1px solid #f0f0f0; border-radius: 24px; padding: 30px; background-color: #f0f0f0; text-align: center; vertical-align: middle;" class="hc-raised-box">
+					<label style="font-weight: bold; font-size: 24px;">Bạn chưa tham gia kỳ thi này ?</label><br><br>
+					<button id="join-button" type="button" class="btn btn-primary" style="border: none; border-radius: 12px; height: 50px; font-weight: bold;">Tham gia ngay</button>
+				</div>
+				{% endif %}
+				<p>{{ contest.contest_description|safe_markdown }}</p>
+				{% if user_registered and user.is_authenticated and contest.contest_status != "SCHEDULE" %}
+				<br>
+				<a href="/contest/{{ contest.contest_id }}/problem/" style="color: black;">
+					<div style="border: 1px solid #c4c4c4; border-radius: 24px; padding: 30px; font-weight: bold;" class="hc-raised-box">
+						<label>Đề bài</label>
+						<span style="float: right; color: #006eff;">Xem&nbsp;&nbsp;<i class="fas fa-arrow-right"></i></span>
+					</div>
+				</a>
+				{% endif %}
+				<br>
+				<a href="/contest/{{ contest.contest_id }}/leaderboard/" style="color: black;">
+					<div style="border: 1px solid #c4c4c4; border-radius: 24px; padding: 30px; font-weight: bold;" class="hc-raised-box">
+						<label>Bảng Xếp Hạng</label>
+						<span style="float: right; color: #006eff;">Xem&nbsp;&nbsp;<i class="fas fa-arrow-right"></i></span>
+					</div>
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">$("#join-button").click(function(){$.ajax({url:"/contest/{{ contest.contest_id }}/{% if not user_registered %}register{% else %}unregister{% endif %}/",type:"POST",data:{csrfmiddlewaretoken:"{{ csrf_token }}"},timeout:30000}).done(function(result){location.reload();});});</script>
+{% endblock %}
