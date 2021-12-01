@@ -7,6 +7,8 @@ from .models import *
 from django.db.models import *
 from django.views.decorators.csrf import csrf_exempt
 
+import datetime
+
 def contest_page(req, id=None):
 	user_registered = False
 	if id is not None:
@@ -19,7 +21,8 @@ def contest_page(req, id=None):
 		return render(req, 'pages/contest/contest_detail.html', {"contest": contest, "user_registered": user_registered})
 	contest = Contest.objects.filter(contest_status="RUNNING") | Contest.objects.filter(contest_status="SCHEDULE")
 	contest = contest.order_by('-contest_created')
-	return render(req, 'pages/contest/contest.html', {"contest": contest})
+	archived = Contest.objects.filter(contest_status="ARCHIVED").order_by('-contest_created')
+	return render(req, 'pages/contest/contest.html', {"contest": contest, "archived": archived})
 
 def contest_register_page(req, id):
 	contest = Contest.objects.filter(contest_id=id)
@@ -27,6 +30,9 @@ def contest_register_page(req, id):
 		contest = contest[0]
 		if contest.contest_status == "SCHEDULE":
 			profile = Profile.objects.filter(user__username=req.user.username)[0]
+			l = Leaderboard.objects.filter(profile=profile, contest__contest_status="SCHEDULE") | Leaderboard.objects.filter(profile=profile, contest__contest_status="RUNNING")
+			if l.exists():
+				return JsonResponse({})
 			if not Leaderboard.objects.filter(profile=profile, contest=contest).exists():
 				lb = Leaderboard.objects.create(profile=profile, contest=contest)
 				lb.save()
@@ -79,6 +85,8 @@ def contest_problem_page(req, id, problem_id=None):
 		return render(req, "pages/error/hao404.html", {"err_msg": "Có vẻ vị sư huynh đây đang tính vào phần bài tập mà không cần tham gia kỳ thi đúng không vậy ? Tiếc là tại hạ không thể cho sư huynh vào được rồi !"})
 	if contest.exists() and req.method == "GET":
 		contest = contest[0]
+		if contest.contest_status == "SCHEDULE":
+			return render(req, "pages/error/hao404.html", {"err_msg": "Vị huynh đài à, hiện tại kỳ thi này đang trong thời gian chờ vui lòng huynh đài đừng cố gắng vào làm bài nữa, đợi tới giờ kỳ thi sẽ mở cho huynh đài làm mà !"})
 		code = {
 			"Grandmaster": "GM",
 			'International Master': "IM",
@@ -100,4 +108,29 @@ def contest_problem_page(req, id, problem_id=None):
 			else:
 				raise Http404
 		return render(req, 'pages/contest/contest_problem.html', {"contest": contest, "role_code": code, "problem": problem})
+	raise Http404
+
+def contest_upcoming_time(req, id):
+	contest = Contest.objects.filter(contest_id = id)
+	if not contest.exists():
+		return render(req, 'pages/error/hao404.html', {"err_msg": f"Có vẻ vị khách quan đang cố gắng truy cập vào kỳ thi bằng id {id} đúng không vậy hả ? Hiện tại kỳ thi này đã bị hủy hoặc bị ẩn đi rồi đó thưa khách quan."})
+
+	if req.method == "POST" and req.user.is_authenticated:
+		contest = contest[0]
+		timenow = datetime.datetime.now().astimezone()
+		remain_time = (contest.contest_schedule - timenow).total_seconds()
+		return JsonResponse({"time": remain_time})
+
+	raise Http404
+
+def contest_remain_time(req, id):
+	contest = Contest.objects.filter(contest_id = id)
+	if not contest.exists():
+		return render(req, 'pages/error/hao404.html', {"err_msg": f"Có vẻ vị khách quan đang cố gắng truy cập vào kỳ thi bằng id {id} đúng không vậy hả ? Hiện tại kỳ thi này đã bị hủy hoặc bị ẩn đi rồi đó thưa khách quan."})
+
+	if req.method == "POST" and req.user.is_authenticated:
+		contest = contest[0]
+		hour, minute, second = map(int, contest.contest_current_long.split(':'))
+		return JsonResponse({"time": second + minute * 60 + hour * 3600})
+
 	raise Http404

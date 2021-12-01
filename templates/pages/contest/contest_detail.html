@@ -28,8 +28,20 @@ Hảo Coder: {{ contest.contest_title }}
 					<li>Dạng kỳ thi: {{ contest.contest_format }}</li>
 					<li>Kỳ thi được tính hệ số cho các bạn có hệ số trong khoảng {{ contest.contest_rating_range }}</li>
 				</ul>
+				{% if contest.contest_status == "SCHEDULE" %}
+				<div style="border: 1px solid #f0f0f0; border-radius: 24px; padding: 30px; background-color: #f0f0f0; text-align: center; vertical-align: middle;">
+					<label style="font-weight: bold; font-size: 24px;">Kỳ thi chuẩn bị diễn ra trong</label><br><br>
+					<label id="time-label" style="font-weight: bold; font-size: 60px;"></label>
+				</div>
+				{% elif contest.contest_status == "RUNNING" %}
+				<div style="border: 1px solid #f0f0f0; border-radius: 24px; padding: 30px; background-color: #f0f0f0; text-align: center; vertical-align: middle;">
+					<label style="font-weight: bold; font-size: 24px;">Kỳ thi sẽ kêt thúc sau</label><br><br>
+					<label id="time-label" style="font-weight: bold; font-size: 60px;"></label>
+				</div>
+				{% endif %}
 				{% if not user_registered and user.is_authenticated and contest.contest_status == "SCHEDULE" %}
-				<div  style="border: 1px solid #f0f0f0; border-radius: 24px; padding: 30px; background-color: #f0f0f0; text-align: center; vertical-align: middle;" class="hc-raised-box">
+				<br>
+				<div style="border: 1px solid #f0f0f0; border-radius: 24px; padding: 30px; background-color: #f0f0f0; text-align: center; vertical-align: middle;">
 					<label style="font-weight: bold; font-size: 24px;">Bạn chưa tham gia kỳ thi này ?</label><br><br>
 					<button id="join-button" type="button" class="btn btn-primary" style="border: none; border-radius: 12px; height: 50px; font-weight: bold;">Tham gia ngay</button>
 				</div>
@@ -56,4 +68,53 @@ Hảo Coder: {{ contest.contest_title }}
 	</div>
 </div>
 <script type="text/javascript">$("#join-button").click(function(){$.ajax({url:"/contest/{{ contest.contest_id }}/{% if not user_registered %}register{% else %}unregister{% endif %}/",type:"POST",data:{csrfmiddlewaretoken:"{{ csrf_token }}"},timeout:30000}).done(function(result){location.reload();});});</script>
+{% if contest.contest_status == "SCHEDULE" or contest.contest_status == "RUNNING" %}
+<script type="text/javascript">
+$(document).ready(function() {
+	$.ajax({
+		url: "/contest/{{ contest.contest_id }}/{% if contest.contest_status == 'SCHEDULE' %}upcoming_time{% elif contest.contest_status == 'RUNNING' %}remain_time{%endif%}/",
+		type: "POST",
+		data: {
+			csrfmiddlewaretoken: "{{ csrf_token }}",
+		}
+	}).done(function(result) {
+		function pretty(t) {
+			return t < 10 ? "0" + t: t;
+		}
+		var time = result["time"];
+		var days = parseInt(time / 86400) < 0 ? 0 : parseInt(time / 86400);
+		var hour = parseInt(time % 86400 / 3600) < 0 ? 0 : parseInt(time % 86400 / 3600);
+		var minute = parseInt(time % 86400 % 3600 / 60) < 0 ? 0 : parseInt(time % 86400 % 3600 / 60);
+		var second = parseInt(time % 86400 % 3600 % 60) < 0 ? 0 : parseInt(time % 86400 % 3600 % 60);
+		var clock = $("#time-label");
+		clock.text(days + " ngày " + pretty(hour) + ":" + pretty(minute) + ":" + pretty(second));
+		if (days >= 0 && hour >= 0 && minute >= 0 && second >= 0) {
+			var intervalid = setInterval(function() {
+				second -= 1;
+				if (second < 0) {
+					second = 59;
+					minute -= 1;
+					if (minute < 0) {
+						minute = 59;
+						hour -= 1;
+					}
+				}
+				clock.text(days + " ngày " + pretty(hour) + ":" + pretty(minute) + ":" + pretty(second));
+				if (days == 0 && hour == 0 && minute == 0 && second == 0) {
+					{% if contest.contest_status == "SCHEDULE" %}
+					$.ajax({
+						url: "/",
+						type: "GET"
+					});
+					{% elif contest.contest_status == "RUNNING" %}
+					location.reload();
+					{% endif %}
+					clearInterval(intervalid);
+				}
+			}, 1050);
+		}
+	});
+});
+</script>
+{% endif %}
 {% endblock %}

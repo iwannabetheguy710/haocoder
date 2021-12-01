@@ -27,6 +27,7 @@ class Contest(models.Model):
 	contest_created = models.DateTimeField(auto_now_add=True, blank=True)
 	contest_schedule = models.DateTimeField(default=datetime.now)
 	contest_long = models.CharField(max_length=20, default="01:00:00")
+	contest_current_long = models.CharField(max_length=20, default="01:00:00")
 	contest_status = models.CharField(max_length=50, default="SCHEDULE", choices=CONTEST_STATUS)
 	contest_rated = models.BooleanField(default=True)
 

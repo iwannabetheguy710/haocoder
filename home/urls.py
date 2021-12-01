@@ -13,4 +13,5 @@ urlpatterns = [
 	# user profile
 	path('profile/', views.profile_page, name='profile page'),
 	path('profile/<str:qry>/', views.profile_page, name='profile user page'),
+	path('ranking/', views.ranking_page, name='ranking page'),
 ]

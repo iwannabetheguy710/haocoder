@@ -28,7 +28,7 @@ Hảo Coder: Bảng xếp hạng {{ contest.contest_title }}
 					<br><br>
 					Bảng xếp hạng
 				</h3>
-				{% if contest %}
+				{% if contest and leaderboard %}
 				<div class="table-responsive">
 					<table class="table">
 						<thead>
@@ -67,6 +67,11 @@ Hảo Coder: Bảng xếp hạng {{ contest.contest_title }}
 							{% endfor %}
 						</tbody>
 					</table>
+				</div>
+				{% else %}
+				<br>
+				<div class="table-responsive" style="text-align: center; font-style: italic;">
+					Hiện tại kỳ thi chưa có thí sinh nào.
 				</div>
 				{% endif %}
 			</div>

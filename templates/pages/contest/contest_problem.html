@@ -35,10 +35,9 @@ Hảo Coder: Đề bài {{ contest.contest_title }}
 				<br><br>
 				{% for p in problem %}
 				<a href="/contest/{{ contest.contest_id }}/problem/{{ p.problem_id }}/" style="color: black; text-decoration: none;">
-					<div style="border: 1px solid #c4c4c4; border-radius: 24px; padding: 30px; font-weight: bold; font-size: 21px;" class="hc-raised-box">
+					<div style="border: 1px solid #c4c4c4; border-radius: 24px; padding: 30px; font-weight: bold; font-size: 20px;" class="hc-raised-box">
 						<label>{{ p.contest_problem_id }}. {{ p.problem_title }} ({{ p.problem_score }} điểm)</label>
 						<span style="float: right; color: #006eff;">Làm bài&nbsp;&nbsp;<i class="fas fa-arrow-right"></i></span>
-						<span style="float: right;">(<span style="color: #00b006;">{{ p.problem_accepted }} AC</span>, <span style="color: #cc0000;">{{ p.problem_wrongans }} WA</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 					</div>
 				</a>
 				{% endfor %}

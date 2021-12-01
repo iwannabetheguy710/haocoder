@@ -5,4 +5,74 @@ Hảo Coder: Nơi cốt thủ hội tụ
 {% endblock %}
 
 {% block content %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/hcbadge.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/hcbox.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/hccolor.css' %}">
+
+<div class="container">
+	<div class="row">
+		<div class="col-4">
+			<div class="row">
+				<div style="border: 2px solid #a0a0a0; padding: 10px; border-radius: 24px; text-align: center;">
+					<h4 style="font-weight: bold;">Các kỳ thi sắp tới</h4>
+					{% if not ongoing_contest %}
+					<label>Hiện tại không có kỳ thi nào chuẩn bị diễn ra.</label>
+					{% else %}
+					{% for oc in ongoing_contest %}
+					<label style="font-size: 17px; font-weight: bold;">
+						<a href="/contest/{{ oc.contest_id }}/" style="text-decoration: none;">
+							{{ oc.contest_title }}
+							{% if oc.contest_rated %}
+							<span class="hc-badge" style="background-color: #F53B3B; font-size: 14px;">Rated</span>
+							{% endif %}
+						</a>
+					</label>
+					<p style="color: gray;">Bắt đầu lúc: {{ oc.contest_schedule|date:"H:i d/m/Y" }}</p>
+					<div class="dropdown-divider"></div>
+					{% endfor %}
+					{% endif %}
+				</div>
+			</div>
+			<br>
+			<div class="row">
+				<div style="border: 2px solid #a0a0a0; border-radius: 24px; padding: 10px; text-align: center;">
+					<h4 style="font-weight: bold;">Top 10 Coders</h4>
+					<div class="table-responsive">
+						<table class="table" style="font-weight: bold; font-size: 16px;">
+							<thead>
+								<tr>
+									<td scope="col" style="width: 20px; text-align: center;">STT</td>
+									<td scope="col">Coder</td>
+									<td scope="col" style="width: 80px;text-align: center;">Hệ số</td>
+								</tr>
+							</thead>
+							<tbody>
+								{% for u in top10 %}
+								<tr>
+									<td scope="row" style="text-align: center; vertical-align: middle;">{{ forloop.counter }}</td>
+									<td scope="row" style="vertical-align: center; text-align: left;">
+										<a href="/profile/{{ u }}/" style="text-decoration: none; color: {{ u.color }};">
+											{% for k, v in role_code.items %}
+											{% if k == u.role %}
+											<span class="hc-badge" style="background-color: {{ u.color }}; font-size: 14px;">{{ v }}</span>
+											{% endif %}
+											{% endfor %}
+											{{ u }}
+										</a>
+									</td>
+									<td scope="row" style="color: {{ u.color }}; vertical-align: middle; text-align: center;">{{ u.ratings }}</td>
+								</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-8">
+			<div style="border: 2px solid #a0a0a0; border-radius: 24px; padding: 30px;"></div>
+		</div>
+	</div>
+</div>
 {% endblock %}

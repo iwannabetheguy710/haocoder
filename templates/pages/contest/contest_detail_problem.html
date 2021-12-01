@@ -75,15 +75,14 @@ Hảo Coder: {{ problem.problem_title }}
 					<form>
 						<div id="editor" class="hc-raised-box"></div>
 						<br>
-						<button class="btn btn-primary" style="float: right; border: none; border-radius: 12px; box-shadow: 5px 5px 5px gray;">Nộp bài</button>
+						<button id="submit-button" class="btn btn-primary" style="float: right; border: none; border-radius: 12px; box-shadow: 5px 5px 5px gray;" disabled>Nộp bài</button>
 						<select id="lang-select" class="form-select" style="width: 250px; float: right; margin: auto 10px; border-radius: 12px; height: 35px; padding: 0px 15px; border: 1px solid #d0d0d0;">
-							<option selected>Chọn ngôn ngữ</option>
+							<option selected value="">Chọn ngôn ngữ</option>
 							<option value="c">C</option>
 							<option value="cpp">C++</option>
-							<option value="csharp">C#</option>
+							<option value="pascal">Pascal</option>
 							<option value="java">Java</option>
 							<option value="python">Python</option>
-							<option value="ruby">Ruby</option>
 						</select>
 					</form>
 				</div>
@@ -96,4 +95,21 @@ Hảo Coder: {{ problem.problem_title }}
 <script type="text/javascript" src="{% static 'ace/ace.js' %}" charset="utf-8"></script>
 <script type="text/javascript">var editor = ace.edit("editor");</script>
 <style type="text/css">#editor{border:1px solid #d0d0d0;display:grid;border-radius:18px;position:relative;height:400px;width:1050px;}</style>
+<script type="text/javascript">
+$("#lang-select").on('change', function() {
+	var mode = $("#lang-select").val();
+	if (mode=="c"||mode=="cpp")
+		editor.session.setMode("ace/mode/c_cpp");
+	else if (mode=="pascal")
+		editor.session.setMode("ace/mode/pascal");
+	else if (mode=="java")
+		editor.session.setMode("ace/mode/java");
+	else if (mode=="python")
+		editor.session.setMode("ace/mode/python");
+	if(mode!="")
+		$("#submit-button").attr('disabled', false);
+	else
+		$("#submit-button").attr('disabled', true);
+});
+</script>
 {% endblock %}

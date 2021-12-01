@@ -1,0 +1,54 @@
+{% extends 'pages/base.html ' %}
+
+{% block title %}
+Hảo Coder: Xếp hạng
+{% endblock %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/hcbadge.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/hcbox.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/hccolor.css' %}">
+
+<div class="container">
+	<div class="row">
+		<div class="col-12">
+			<div style="border: 2px solid #a0a0a0; border-radius: 24px; padding: 30px;">
+				<h2 style="font-weight: bold;">Bảng xếp hạng</h2>
+				<div class="dropdown-divider"></div>
+				<div class="table-responsive">
+					<table class="table">
+						<thead>
+							<tr>
+								<th scope="col" style="text-align: center; width: 70px">STT</th>
+								<th scope="col">Coder</th>
+								<th scope="col" style="text-align: center; width: 80px;">Hệ số</th>
+								<th scope="col" style="text-align: center; width: 90px;">Cao nhất</th>
+								<th scope="col" style="text-align: center; width: 50px;">Win</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for u in ranking %}
+							<tr style="font-weight: bold; height: 60px;">
+								<td scope="row" style="text-align: center; vertical-align: middle;">{{ forloop.counter }}</td>
+								<td scope="row" style="vertical-align: middle;"><a href="/profile/{{ u }}/" style="text-decoration: none; color: {{ u.color }};">
+									{% for k, v in role_code.items %}
+									{% if k == u.role %}
+									<span class="hc-badge" style="background-color: {{ u.color }}; font-size: 14px;">{{ v }}</span>
+									{% endif %}
+									{% endfor %}
+									{{ u }}
+								</a></td>
+								<td scope="row" style="text-align: center; vertical-align: middle; color: {{ u.color }};">{{ u.ratings }}</td>
+								<td scope="row" style="text-align: center; vertical-align: middle; color: {{ u.highest_color }};">{{ u.highest_ratings }}</td>
+								<td scope="row" style="vertical-align: middle;text-align: center;">{{ u.win }}</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

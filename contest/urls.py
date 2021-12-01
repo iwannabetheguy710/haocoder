@@ -12,4 +12,6 @@ urlpatterns = [
 	path('contest/<str:id>/register/', views.contest_register_page, name='contest register page'),
 	path('contest/<str:id>/register/check/', views.contest_register_check_page, name='contest register check page'),
 	path('contest/<str:id>/unregister/', views.contest_unregister_page, name='contest unregister page'),
+	path('contest/<str:id>/upcoming_time/', views.contest_upcoming_time, name='contest upcoming time'),
+	path('contest/<str:id>/remain_time/', views.contest_remain_time, name='contest remain time'),
 ]

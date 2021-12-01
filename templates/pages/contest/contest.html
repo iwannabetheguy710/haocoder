@@ -67,4 +67,58 @@ Hảo Coder: Kỳ thi
 			</div>
 		</div>
 	</div>
-</div>{% endblock %}
+	<br>
+	<div class="row justify-content-lg-center">
+		<div class="col-12">
+			<div class="table-responsive" style="border: 2px solid #d0d0d0; padding: 30px; border-radius: 24px; background-color: white;">
+				<h2 style="font-weight: bold;">Các kỳ thi đã qua</h2><br>
+				{% if archived %}
+				<table class="table">
+					<thead>
+						<tr>
+							<th scope="col">Tên kỳ thi</th>
+							<th scope="col" style="text-align: center; width: 79px;">Thí sinh</th>
+							<th scope="col" style="width: 150px;"></th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for con in archived %}
+						<tr>
+							<td scope="row" style="vertical-align: middle;">
+								<div>
+									<label style="font-weight: bold; font-size: 22px;">
+										<a href="/contest/{{ con.contest_id }}/" style="text-decoration: none;">{{ con.contest_title }}</a>
+										{% if con.contest_rated %}
+										<span class="hc-badge hc-bg-red" style="padding: 7px; font-size: 16px; vertical-align: middle;">Rated</span>
+										{% endif %}
+									</label>
+									
+									<p style="color: gray;">
+										Đã bắt đầu lúc: {{ con.contest_schedule|date:"H:i" }} ngày {{ con.contest_schedule|date:"d/m/Y" }}
+										<br>
+										Thời gian làm bài: {{ con.contest_long }}
+										<br>
+										Dạng kỳ thi: {{ con.contest_format }}
+									</p>
+								</div>
+							</td>
+							<td scope="row" style="vertical-align: middle; text-align: center;">{{ con.contestant_count }}</td>
+							<td scope="row" style="vertical-align: middle; text-align: center;">
+								<button id="join-button-{{ forloop.counter }}" type="button" class="btn btn-primary" style="{% if user_registered %}background-color: red;{% endif %} border: none; border-radius: 12px; font-weight: bold;" disabled>
+									Đã kết thúc
+								</button>
+							</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+				{% else %}
+				<div style="text-align: center;">
+					<label>Chưa có kỳ thi nào đã diễn ra.</label>
+				</div>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

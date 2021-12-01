@@ -28,6 +28,7 @@ INSTALLED_APPS = [
 	'django.contrib.messages',
 	'django.contrib.staticfiles',
 	'martor',
+	'django_q',
 ]
 
 MIDDLEWARE = [
@@ -193,3 +194,12 @@ MARTOR_MARKDOWN_BASE_EMOJI_URL = 'https://github.githubassets.com/images/icons/e
 MARTOR_ALTERNATIVE_JS_FILE_THEME = "bootstrap/js/bootstrap.min.js"
 MARTOR_ALTERNATIVE_CSS_FILE_THEME = "bootstrap/css/bootstrap.min.css"
 MARTOR_ALTERNATIVE_JQUERY_JS_FILE = "js/jquery.min.js"
+
+Q_CLUSTER = {
+	'name': "haocoder",
+	'workers': 5,
+	'cpu_affinity': 2,
+	'retry': 10,
+	'timeout': 10,
+	'orm': 'default',
+}
