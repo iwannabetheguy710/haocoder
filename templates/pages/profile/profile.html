@@ -11,31 +11,33 @@ Hảo Coder: {{ usrprof.user.username }}
 
 <div class="container">
 	<div class="row justify-content-lg-center">
-		<div style="background-color: white; padding: 30px; border-radius: 24px; border: 2px solid {{ usrprof.color }};" class="row col-12">
-			<label style="font-size: 26px;">
-				{% if usrprof.user.is_superuser %}
-				<span class="hc-badge hc-bg-black">Admin</span>
-				{% elif usrprof.user.is_staff %}
-				<span class="hc-badge hc-bg-black">Staff</span>
-				{% endif %}
-				{% for k, v in code.items %}
-				{% if k == usrprof.role %}
-				<span class="hc-badge" style="background-color: {{ usrprof.color }};">{{ v }}</span>
-				{% endif %}
-				{% endfor %}
-				<span class="hc-fg-{{ usrprof.color }}" style="font-weight: bold;"><span style="color: {{ usrprof.color }};">{{ usrprof }}</span> ({{ usrprof.role }})</span>
-			</label>
-			<p>tham gia từ {{ usrprof.user.date_joined|date:'d/m/Y' }}</p>
-			<p style="font-size: 20px;">
-				Hệ số: 
-				<span style="font-weight: bold; color: {{ usrprof.color }};">
-					{{ usrprof.ratings }}
-				</span>
-				 (cao nhất <span style="font-weight: bold; color: {{ usrprof.highest_color }};">{{ usrprof.highest_ratings }}</span>, <span style="font-weight: bold; color: {{ usrprof.highest_color }};">{{ usrprof.highest_role }}</span>)
-			</p>
-			<p style="font-size: 20px;">
-				Số lần đứng nhất các kỳ thi: <span style="font-weight: bold;">{{ usrprof.win }}</span>
-			</p>
+		<div class="col-12">
+			<div style="background-color: white; padding: 30px; border-radius: 24px; border: 2px solid {{ usrprof.color }};">
+				<label style="font-size: 26px;">
+					{% if usrprof.user.is_superuser %}
+					<span class="hc-badge hc-bg-black">Admin</span>
+					{% elif usrprof.user.is_staff %}
+					<span class="hc-badge hc-bg-black">Staff</span>
+					{% endif %}
+					{% for k, v in code.items %}
+					{% if k == usrprof.role %}
+					<span class="hc-badge" style="background-color: {{ usrprof.color }};">{{ v }}</span>
+					{% endif %}
+					{% endfor %}
+					<span class="hc-fg-{{ usrprof.color }}" style="font-weight: bold;"><span style="color: {{ usrprof.color }};">{{ usrprof }}</span> ({{ usrprof.role }})</span>
+				</label>
+				<p>tham gia từ {{ usrprof.user.date_joined|date:'d/m/Y' }}</p>
+				<p style="font-size: 20px;">
+					Hệ số: 
+					<span style="font-weight: bold; color: {{ usrprof.color }};">
+						{{ usrprof.ratings }}
+					</span>
+					 (cao nhất <span style="font-weight: bold; color: {{ usrprof.highest_color }};">{{ usrprof.highest_ratings }}</span>, <span style="font-weight: bold; color: {{ usrprof.highest_color }};">{{ usrprof.highest_role }}</span>)
+				</p>
+				<p style="font-size: 20px;">
+					Số lần đứng nhất các kỳ thi: <span style="font-weight: bold;">{{ usrprof.win }}</span>
+				</p>
+			</div>
 		</div>
 	</div>
 </div>

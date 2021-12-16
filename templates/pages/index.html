@@ -1,4 +1,4 @@
-{% extends 'pages/base.html ' %}
+{% extends 'pages/base.html' %}
 
 {% block title %}
 Hảo Coder: Nơi cốt thủ hội tụ
@@ -6,18 +6,29 @@ Hảo Coder: Nơi cốt thủ hội tụ
 
 {% block content %}
 {% load static %}
+{% load martortags %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/hcbadge.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'css/hcbox.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'css/hccolor.css' %}">
 
 <div class="container">
 	<div class="row">
+		<div class="col-12">
+			{% if userjoin %}
+			<div style="border: 1px solid #f0f0f0; border-radius: 24px; padding: 30px; background-color: #f0f0f0; text-align: center; vertical-align: middle;">
+				<label style="font-weight: bold; font-size: 24px;">{{ userjoin.contest.contest_title }} sẽ kết thúc sau</label><br>
+				<label id="time-label" style="font-weight: bold; font-size: 50px;"></label><br><br>
+				<button class="btn btn-primary" style="height: 50px; border: none; border-radius: 12px;"><a href="/contest/{{ userjoin.contest.contest_id }}/problem/" style="color: white; text-decoration: none; font-size: 18px;">Quay trở lại làm bài</a></button>
+			</div>
+			<br><br>
+			{% endif %}
+		</div>
 		<div class="col-4">
-			<div class="row">
-				<div style="border: 2px solid #a0a0a0; padding: 10px; border-radius: 24px; text-align: center;">
-					<h4 style="font-weight: bold;">Các kỳ thi sắp tới</h4>
+			<div style="border-radius: 24px; background-color: #dbdbdb; border: 2px solid #dbdbdb;">
+				<h4 style="font-weight: bold; text-align: center; margin: 2px 0px;">Các kỳ thi sắp tới</h4>
+				<div style="border: none; padding: 10px; border-radius: 24px; text-align: center; background-color: white;">
 					{% if not ongoing_contest %}
-					<label>Hiện tại không có kỳ thi nào chuẩn bị diễn ra.</label>
+					<label style="font-style: italic;">Hiện tại không có kỳ thi nào chuẩn bị diễn ra.</label>
 					{% else %}
 					{% for oc in ongoing_contest %}
 					<label style="font-size: 17px; font-weight: bold;">
@@ -35,11 +46,11 @@ Hảo Coder: Nơi cốt thủ hội tụ
 				</div>
 			</div>
 			<br>
-			<div class="row">
-				<div style="border: 2px solid #a0a0a0; border-radius: 24px; padding: 10px; text-align: center;">
-					<h4 style="font-weight: bold;">Top 10 Coders</h4>
+			<div style="border-radius: 24px; border: 2px solid #dbdbdb; background-color: #dbdbdb;">
+				<h4 style="font-weight: bold; text-align: center; margin: 2px 0px;">Top 10 Coders</h4>
+				<div style="border: none; border-radius: 24px; padding: 10px; text-align: center; background-color: white;">
 					<div class="table-responsive">
-						<table class="table" style="font-weight: bold; font-size: 16px;">
+						<table class="table" style="font-weight: bold; font-size: 14px;">
 							<thead>
 								<tr>
 									<td scope="col" style="width: 20px; text-align: center;">STT</td>
@@ -55,7 +66,7 @@ Hảo Coder: Nơi cốt thủ hội tụ
 										<a href="/profile/{{ u }}/" style="text-decoration: none; color: {{ u.color }};">
 											{% for k, v in role_code.items %}
 											{% if k == u.role %}
-											<span class="hc-badge" style="background-color: {{ u.color }}; font-size: 14px;">{{ v }}</span>
+											<span class="hc-badge" style="background-color: {{ u.color }}; font-size: 12px;">{{ v }}</span>
 											{% endif %}
 											{% endfor %}
 											{{ u }}
@@ -71,8 +82,73 @@ Hảo Coder: Nơi cốt thủ hội tụ
 			</div>
 		</div>
 		<div class="col-8">
-			<div style="border: 2px solid #a0a0a0; border-radius: 24px; padding: 30px;"></div>
+			{% for ann in annoucement %}
+			<div style="border-radius: 24px; background-color: #dbdbdb; border: 2px solid #dbdbdb;">
+				<h5 style="text-align: center; margin: 2px 0px;">{{ ann.title }}</h5>
+				<div style="border-radius: 24px; padding: 30px; background-color: white; padding: 20px;">
+					{{ ann.content|safe_markdown }}
+				</div>
+			</div>
+			<br>
+			{% endfor %}
 		</div>
 	</div>
 </div>
+<script type="text/javascript">
+$(document).ready(function() {
+	$.ajax({
+		url: "/contest/{{ userjoin.contest.contest_id }}/{% if userjoin.contest.contest_status == 'SCHEDULE' %}upcoming_time{% elif userjoin.contest.contest_status == 'RUNNING' %}remain_time{%endif%}/",
+		type: "POST",
+		data: {
+			csrfmiddlewaretoken: "{{ csrf_token }}",
+		}
+	}).done(function(result) {
+		function pretty(t) {
+			return t < 10 ? "0" + t: t;
+		}
+		var time = result["time"];
+		var days = parseInt(time / 86400) < 0 ? 0 : parseInt(time / 86400);
+		var hour = parseInt(time % 86400 / 3600) < 0 ? 0 : parseInt(time % 86400 / 3600);
+		var minute = parseInt(time % 86400 % 3600 / 60) < 0 ? 0 : parseInt(time % 86400 % 3600 / 60);
+		var second = parseInt(time % 86400 % 3600 % 60) < 0 ? 0 : parseInt(time % 86400 % 3600 % 60);
+		var clock = $("#time-label");
+		clock.text(days + " ngày " + pretty(hour) + ":" + pretty(minute) + ":" + pretty(second));
+		if (days >= 0 && hour >= 0 && minute >= 0 && second >= 0) {
+			var intervalid = setInterval(function() {
+				second -= 1;
+				if (second < 0) {
+					second = 59;
+					minute -= 1;
+					if (minute < 0) {
+						minute = 59;
+						hour -= 1;
+					}
+				}
+				clock.text(days + " ngày " + pretty(hour) + ":" + pretty(minute) + ":" + pretty(second));
+				if (days == 0 && hour == 0 && minute == 0 && second == 0) {
+					{% if contest.contest_status == "SCHEDULE" %}
+					$.ajax({
+						url: "/",
+						type: "GET"
+					});
+					{% elif contest.contest_status == "RUNNING" %}
+					location.reload();
+					{% endif %}
+					clearInterval(intervalid);
+				}
+			}, 1050);
+		}
+		if (days == 0 && hour == 0 && minute == 0 && second == 0) {
+			{% if contest.contest_status == "SCHEDULE" %}
+			$.ajax({
+				url: "/",
+				type: "GET"
+			});
+			{% elif contest.contest_status == "RUNNING" %}
+			location.reload();
+			{% endif %}
+		}
+	});
+});
+</script>
 {% endblock %}

@@ -81,7 +81,7 @@ def contest_leaderboard_page(req, id):
 def contest_problem_page(req, id, problem_id=None):
 	contest = Contest.objects.filter(contest_id=id)
 	lb = Leaderboard.objects.filter(profile__user__username=req.user.username)
-	if not lb.exists():
+	if not lb.exists() and not contest.filter(contest_status="ARCHIVED").exists():
 		return render(req, "pages/error/hao404.html", {"err_msg": "Có vẻ vị sư huynh đây đang tính vào phần bài tập mà không cần tham gia kỳ thi đúng không vậy ? Tiếc là tại hạ không thể cho sư huynh vào được rồi !"})
 	if contest.exists() and req.method == "GET":
 		contest = contest[0]
@@ -128,7 +128,7 @@ def contest_remain_time(req, id):
 	if not contest.exists():
 		return render(req, 'pages/error/hao404.html', {"err_msg": f"Có vẻ vị khách quan đang cố gắng truy cập vào kỳ thi bằng id {id} đúng không vậy hả ? Hiện tại kỳ thi này đã bị hủy hoặc bị ẩn đi rồi đó thưa khách quan."})
 
-	if req.method == "POST" and req.user.is_authenticated:
+	if req.method == "POST":
 		contest = contest[0]
 		hour, minute, second = map(int, contest.contest_current_long.split(':'))
 		return JsonResponse({"time": second + minute * 60 + hour * 3600})

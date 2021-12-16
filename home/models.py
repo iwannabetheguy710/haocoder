@@ -1,7 +1,18 @@
 from django.db import models
 from django.contrib.auth.models import *
 
-# Create your models here.
+from martor.models import MartorField
+
+class Announcement(models.Model):
+	id = models.AutoField(primary_key=True)
+	title = models.CharField(max_length=1000, default='')
+	content = MartorField(default='')
+	visible = models.BooleanField(default=True)
+	publish_date = models.DateTimeField(auto_now_add=True, blank=True)
+
+	def __str__(self):
+		return self.title
+
 class Profile(models.Model):
 	id = models.AutoField(primary_key=True)
 	user = models.ForeignKey(User, on_delete=models.CASCADE)

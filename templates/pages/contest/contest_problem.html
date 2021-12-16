@@ -14,6 +14,13 @@ Hảo Coder: Đề bài {{ contest.contest_title }}
 <div class="container">
 	<div class="row justify-content-lg-center">
 		<div class="col-12">
+			{% if contest.contest_status != "ARCHIVED" %}
+			<div style="border: 1px solid #f0f0f0; border-radius: 24px; padding: 30px; background-color: #f0f0f0; text-align: center; vertical-align: middle;">
+				<label style="font-weight: bold; font-size: 24px;">Kỳ thi sẽ kết thúc sau</label><br><br>
+				<label id="time-label" style="font-weight: bold; font-size: 60px;"></label>
+			</div>
+			<br><br>
+			{% endif %}
 			<div style="border: 2px solid #d0d0d0; border-radius: 24px; padding: 30px; background-color: white;">
 				<div>
 					<span style="color: #006eff;">
@@ -27,6 +34,7 @@ Hảo Coder: Đề bài {{ contest.contest_title }}
 						<i class="fas fa-arrow-right"></i>
 					</a></span>
 				</div>
+				<br>
 				<h3 style="font-weight: bold; text-align: center;">
 					{{ contest.contest_title }}
 					<br><br>
@@ -35,7 +43,7 @@ Hảo Coder: Đề bài {{ contest.contest_title }}
 				<br><br>
 				{% for p in problem %}
 				<a href="/contest/{{ contest.contest_id }}/problem/{{ p.problem_id }}/" style="color: black; text-decoration: none;">
-					<div style="border: 1px solid #c4c4c4; border-radius: 24px; padding: 30px; font-weight: bold; font-size: 20px;" class="hc-raised-box">
+					<div style="border: 1px solid #c4c4c4; border-radius: 24px; padding: 30px; font-weight: bold; font-size: 17px;" class="hc-raised-box">
 						<label>{{ p.contest_problem_id }}. {{ p.problem_title }} ({{ p.problem_score }} điểm)</label>
 						<span style="float: right; color: #006eff;">Làm bài&nbsp;&nbsp;<i class="fas fa-arrow-right"></i></span>
 					</div>
@@ -45,4 +53,64 @@ Hảo Coder: Đề bài {{ contest.contest_title }}
 		</div>
 	</div>
 </div>
+
+{% if contest.contest_status != "ARCHIVED" %}
+<script type="text/javascript">
+$(document).ready(function() {
+	$.ajax({
+		url: "/contest/{{ contest.contest_id }}/{% if contest.contest_status == 'SCHEDULE' %}upcoming_time{% elif contest.contest_status == 'RUNNING' %}remain_time{%endif%}/",
+		type: "POST",
+		data: {
+			csrfmiddlewaretoken: "{{ csrf_token }}",
+		}
+	}).done(function(result) {
+		function pretty(t) {
+			return t < 10 ? "0" + t: t;
+		}
+		var time = result["time"];
+		var days = parseInt(time / 86400) < 0 ? 0 : parseInt(time / 86400);
+		var hour = parseInt(time % 86400 / 3600) < 0 ? 0 : parseInt(time % 86400 / 3600);
+		var minute = parseInt(time % 86400 % 3600 / 60) < 0 ? 0 : parseInt(time % 86400 % 3600 / 60);
+		var second = parseInt(time % 86400 % 3600 % 60) < 0 ? 0 : parseInt(time % 86400 % 3600 % 60);
+		var clock = $("#time-label");
+		clock.text(days + " ngày " + pretty(hour) + ":" + pretty(minute) + ":" + pretty(second));
+		if (days >= 0 && hour >= 0 && minute >= 0 && second >= 0) {
+			var intervalid = setInterval(function() {
+				second -= 1;
+				if (second < 0) {
+					second = 59;
+					minute -= 1;
+					if (minute < 0) {
+						minute = 59;
+						hour -= 1;
+					}
+				}
+				clock.text(days + " ngày " + pretty(hour) + ":" + pretty(minute) + ":" + pretty(second));
+				if (days == 0 && hour == 0 && minute == 0 && second == 0) {
+					{% if contest.contest_status == "SCHEDULE" %}
+					$.ajax({
+						url: "/",
+						type: "GET"
+					});
+					{% elif contest.contest_status == "RUNNING" %}
+					location.reload();
+					{% endif %}
+					clearInterval(intervalid);
+				}
+			}, 1000);
+		}
+		if (days == 0 && hour == 0 && minute == 0 && second == 0) {
+			{% if contest.contest_status == "SCHEDULE" %}
+			$.ajax({
+				url: "/",
+				type: "GET"
+			});
+			{% elif contest.contest_status == "RUNNING" %}
+			location.reload();
+			{% endif %}
+		}
+	});
+});
+</script>
+{% endif %}
 {% endblock %}

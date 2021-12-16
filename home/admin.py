@@ -7,4 +7,5 @@ class ProfileAdmin(admin.ModelAdmin):
 	autocomplete_fields = ["user"]
 
 # Register your models here.
+admin.site.register(Announcement)
 admin.site.register(Profile, ProfileAdmin)

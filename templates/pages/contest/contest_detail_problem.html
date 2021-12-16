@@ -17,6 +17,13 @@ Hảo Coder: {{ problem.problem_title }}
 <div class="container">
 	<div class="row justify-content-lg-center">
 		<div class="col-12">
+			{% if contest.contest_status != "ARCHIVED" %}
+			<div style="border: 1px solid #f0f0f0; border-radius: 24px; padding: 30px; background-color: #f0f0f0; text-align: center; vertical-align: middle;">
+				<label style="font-weight: bold; font-size: 24px;">Kỳ thi sẽ kết thúc sau</label><br><br>
+				<label id="time-label" style="font-weight: bold; font-size: 60px;"></label>
+			</div>
+			<br><br>
+			{% endif %}
 			<div style="border: 2px solid #d0d0d0; border-radius: 24px; padding: 30px; background-color: white;">
 				<div>
 					<span style="color: #006eff;">
@@ -30,27 +37,32 @@ Hảo Coder: {{ problem.problem_title }}
 						<i class="fas fa-arrow-right"></i>
 					</a></span>
 				</div>
-				<h3 style="font-weight: bold; text-align: center;">
-					{{ contest.contest_title }}
-					<br><br>
-					Đề bài: {{ problem.problem_title }}
-				</h3>
 				<br>
 				<div id="problem-content" style="font-size: 18px;">
-					<ul>
-						<li>Giới hạn thời gian chương trình: {{ problem.problem_time_limit }}s</li>
-						<li>Giới hạn bộ nhớ chương trình: {{ problem.problem_memory_limit }} MB</li>
-						<li>
-							Tác giả: <span style="font-weight: bold; color: {{ problem.profile.color }};">
-								{% for k, v in role_code.items %}
-								{% if k == problem.profile.role %}
-								<span class="hc-badge" style="font-size: 14px; background-color: {{ problem.profile.color }};">{{ v }}</span>
-								{% endif %}
-								{% endfor %}
-								{{ problem.profile }}
-							</span>
-						</li>
-					</ul>
+					<div style="border-radius: 24px; background-color: #dbdbdb; border: none;">
+						<br>
+						<h3 style="font-weight: bold; text-align: center;">
+							{{ contest.contest_title }}
+							<br><br>
+							Đề bài: {{ problem.problem_title }}
+						</h3>
+						<br>
+						<ul style="margin: 0px 30px;">
+							<li>Giới hạn thời gian chương trình: {{ problem.problem_time_limit }}s</li>
+							<li>Giới hạn bộ nhớ chương trình: {{ problem.problem_memory_limit }} MB</li>
+							<li>
+								Tác giả: <a href="/profile/{{ problem.profile }}/" style="text-decoration: none;"><span style="font-weight: bold; color: {{ problem.profile.color }};">
+									{% for k, v in role_code.items %}
+									{% if k == problem.profile.role %}
+									<span class="hc-badge" style="font-size: 14px; background-color: {{ problem.profile.color }};">{{ v }}</span>
+									{% endif %}
+									{% endfor %}
+									{{ problem.profile }}
+								</span></a>
+							</li>
+						</ul>
+						<br>
+					</div>
 					<p>{{ problem.problem_description|safe_markdown }}</p>
 					<br><br>
 					{% for i in problem.problem_sample_in %}
@@ -75,11 +87,10 @@ Hảo Coder: {{ problem.problem_title }}
 					<form>
 						<div id="editor" class="hc-raised-box"></div>
 						<br>
-						<button id="submit-button" class="btn btn-primary" style="float: right; border: none; border-radius: 12px; box-shadow: 5px 5px 5px gray;" disabled>Nộp bài</button>
+						<button id="submit-button" class="btn btn-primary" style="float: right; border: none; border-radius: 12px; box-shadow: 5px 5px 5px gray;">Nộp bài</button>
 						<select id="lang-select" class="form-select" style="width: 250px; float: right; margin: auto 10px; border-radius: 12px; height: 35px; padding: 0px 15px; border: 1px solid #d0d0d0;">
-							<option selected value="">Chọn ngôn ngữ</option>
 							<option value="c">C</option>
-							<option value="cpp">C++</option>
+							<option value="cpp" selected>C++</option>
 							<option value="pascal">Pascal</option>
 							<option value="java">Java</option>
 							<option value="python">Python</option>
@@ -93,23 +104,66 @@ Hảo Coder: {{ problem.problem_title }}
 </div>
 {% load static %}
 <script type="text/javascript" src="{% static 'ace/ace.js' %}" charset="utf-8"></script>
-<script type="text/javascript">var editor = ace.edit("editor");</script>
+<script type="text/javascript">var editor = ace.edit("editor");editor.session.setMode("ace/mode/c_cpp");</script>
 <style type="text/css">#editor{border:1px solid #d0d0d0;display:grid;border-radius:18px;position:relative;height:400px;width:1050px;}</style>
+<script type="text/javascript">$("#lang-select").on('change', function() {var mode = $("#lang-select").val();if (mode=="c"||mode=="cpp")editor.session.setMode("ace/mode/c_cpp");else if (mode=="pascal")editor.session.setMode("ace/mode/pascal");else if (mode=="java")editor.session.setMode("ace/mode/java");else if (mode=="python")editor.session.setMode("ace/mode/python");});</script>
+{% if contest.contest_status != "ARCHIVED" %}
 <script type="text/javascript">
-$("#lang-select").on('change', function() {
-	var mode = $("#lang-select").val();
-	if (mode=="c"||mode=="cpp")
-		editor.session.setMode("ace/mode/c_cpp");
-	else if (mode=="pascal")
-		editor.session.setMode("ace/mode/pascal");
-	else if (mode=="java")
-		editor.session.setMode("ace/mode/java");
-	else if (mode=="python")
-		editor.session.setMode("ace/mode/python");
-	if(mode!="")
-		$("#submit-button").attr('disabled', false);
-	else
-		$("#submit-button").attr('disabled', true);
+$(document).ready(function() {
+	$.ajax({
+		url: "/contest/{{ contest.contest_id }}/{% if contest.contest_status == 'SCHEDULE' %}upcoming_time{% elif contest.contest_status == 'RUNNING' %}remain_time{%endif%}/",
+		type: "POST",
+		data: {
+			csrfmiddlewaretoken: "{{ csrf_token }}",
+		}
+	}).done(function(result) {
+		function pretty(t) {
+			return t < 10 ? "0" + t: t;
+		}
+		var time = result["time"];
+		var days = parseInt(time / 86400) < 0 ? 0 : parseInt(time / 86400);
+		var hour = parseInt(time % 86400 / 3600) < 0 ? 0 : parseInt(time % 86400 / 3600);
+		var minute = parseInt(time % 86400 % 3600 / 60) < 0 ? 0 : parseInt(time % 86400 % 3600 / 60);
+		var second = parseInt(time % 86400 % 3600 % 60) < 0 ? 0 : parseInt(time % 86400 % 3600 % 60);
+		var clock = $("#time-label");
+		clock.text(days + " ngày " + pretty(hour) + ":" + pretty(minute) + ":" + pretty(second));
+		if (days >= 0 && hour >= 0 && minute >= 0 && second >= 0) {
+			var intervalid = setInterval(function() {
+				second -= 1;
+				if (second < 0) {
+					second = 59;
+					minute -= 1;
+					if (minute < 0) {
+						minute = 59;
+						hour -= 1;
+					}
+				}
+				clock.text(days + " ngày " + pretty(hour) + ":" + pretty(minute) + ":" + pretty(second));
+				if (days == 0 && hour == 0 && minute == 0 && second == 0) {
+					{% if contest.contest_status == "SCHEDULE" %}
+					$.ajax({
+						url: "/",
+						type: "GET"
+					});
+					{% elif contest.contest_status == "RUNNING" %}
+					location.reload();
+					{% endif %}
+					clearInterval(intervalid);
+				}
+			}, 1000);
+		}
+		if (days == 0 && hour == 0 && minute == 0 && second == 0) {
+			{% if contest.contest_status == "SCHEDULE" %}
+			$.ajax({
+				url: "/",
+				type: "GET"
+			});
+			{% elif contest.contest_status == "RUNNING" %}
+			location.reload();
+			{% endif %}
+		}
+	});
 });
 </script>
+{% endif %}
 {% endblock %}

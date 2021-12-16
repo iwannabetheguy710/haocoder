@@ -10,30 +10,37 @@ Hảo Coder: Đăng ký
 
 <div class="container">
 	<div class="row justify-content-lg-center">
-		<div class="col-9" style="font-size: 20px;">
-			<form id="register-form">
-				<div class="mb-3">
-					<label class="form-label">Tên tài khoản</label>
-					<input id="usr-name" type="text" class="form-control" placeholder="Tên đăng nhập của bạn (tối đa 20 ký tự)">
+		<div class="col-7" style="font-size: 20px;">
+			<div style="border-radius: 24px; border: 2px solid #0D6EFD; background-color: #0D6EFD; color: white;">
+				<br>
+				<h2 style="text-align: center;">Đăng ký</h2>
+				<br>
+				<div style="background-color: white; border-radius: 24px; border: none; color: black; padding: 30px;">
+					<form id="register-form">
+						<div class="mb-3">
+							<label class="form-label">Tên tài khoản</label>
+							<input id="usr-name" type="text" class="form-control" placeholder="Tên đăng nhập của bạn (tối đa 20 ký tự)">
+						</div>
+						<div class="mb-3">
+							<label class="form-label">Email</label>
+							<input id="usr-email" type="email" class="form-control" placeholder="Email của bạn">
+						</div>
+						<div class="mb-3">
+							<label class="form-label">Mật khẩu</label>
+							<input id="usr-pass" type="password" class="form-control" placeholder="Mật khẩu">
+						</div>
+						<div class="mb-3">
+							<label class="form-label">Nhập lại mật khẩu</label>
+							<input id="re-usr-pass" type="password" class="form-control" placeholder="Nhập lại mật khẩu">
+						</div>
+						<div id="register-err">
+						</div>
+						<div class="text-center">
+							<button id="register-button" type="button" class="btn btn-primary" style="border: none; border-radius: 12px; height: 45px;">Đăng ký</button>
+						</div>
+					</form>
 				</div>
-				<div class="mb-3">
-					<label class="form-label">Email</label>
-					<input id="usr-email" type="email" class="form-control" placeholder="Email của bạn">
-				</div>
-				<div class="mb-3">
-					<label class="form-label">Mật khẩu</label>
-					<input id="usr-pass" type="password" class="form-control" placeholder="Mật khẩu">
-				</div>
-				<div class="mb-3">
-					<label class="form-label">Nhập lại mật khẩu</label>
-					<input id="re-usr-pass" type="password" class="form-control" placeholder="Nhập lại mật khẩu">
-				</div>
-				<div id="register-err">
-				</div>
-				<div class="text-center">
-					<button id="register-button" type="button" class="btn btn-primary" style="border: none; border-radius: 12px; height: 45px;">Đăng ký</button>
-				</div>
-			</form>
+			</div>
 		</div>
 	</div>
 </div>

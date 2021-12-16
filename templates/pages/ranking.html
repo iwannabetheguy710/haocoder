@@ -29,7 +29,7 @@ Hảo Coder: Xếp hạng
 						</thead>
 						<tbody>
 							{% for u in ranking %}
-							<tr style="font-weight: bold; height: 60px;">
+							<tr style="font-weight: bold; height: 60px;" class="hc-raised-tb-row">
 								<td scope="row" style="text-align: center; vertical-align: middle;">{{ forloop.counter }}</td>
 								<td scope="row" style="vertical-align: middle;"><a href="/profile/{{ u }}/" style="text-decoration: none; color: {{ u.color }};">
 									{% for k, v in role_code.items %}

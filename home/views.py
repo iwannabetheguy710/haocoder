@@ -43,6 +43,7 @@ def perform_contest_time(contest_id):
 	contest = Contest.objects.filter(contest_status="RUNNING", contest_id=contest_id)
 	if contest.exists():
 		contest = contest[0]
+		elapsed = int((datetime.datetime.now().astimezone() - contest.contest_schedule).total_seconds())
 		hour, minute, second = map(int, contest.contest_current_long.split(':'))
 		while True:
 			time.sleep(1)
@@ -62,6 +63,7 @@ def perform_contest_time(contest_id):
 
 def index(req):
 	running_contest = Contest.objects.filter(contest_status="SCHEDULE") | Contest.objects.filter(contest_status="RUNNING")
+	"""
 	for i in running_contest:
 		if i.contest_status == "SCHEDULE" and i.contest_schedule <= datetime.datetime.now().astimezone():
 			i.contest_status = "RUNNING"
@@ -69,6 +71,7 @@ def index(req):
 		if i.contest_status == "RUNNING" and i.contest_id not in contest_time_pool:
 			contest_time_pool.append(i.contest_id)
 			async_task(perform_contest_time, i.contest_id, timeout=-1)
+	"""
 
 	p = Profile.objects.all()
 	for i in p:
@@ -88,13 +91,20 @@ def index(req):
 				o.save()
 				break
 
+	user_joined = None
+	if req.user.is_authenticated:
+		user_joined = Leaderboard.objects.filter(profile__user=req.user, contest__contest_status="RUNNING")
+		if user_joined.exists():
+			user_joined = user_joined[0]
+
 	p = p.order_by('-ratings')
 	if len(p)>10:
 		p = p[:10]
 
+	annouce = Announcement.objects.filter(visible=True).order_by('-publish_date')
 	ongoing_contest = Contest.objects.filter(contest_status="SCHEDULE").order_by('-contest_created')
 
-	return render(req, 'pages/index.html', {"ongoing_contest": ongoing_contest, "top10": p, "role_code": code})
+	return render(req, 'pages/index.html', {"ongoing_contest": ongoing_contest, "top10": p, "role_code": code, "userjoin": user_joined, "annoucement": annouce})
 
 def login_page(req):
 	if req.user.is_authenticated:

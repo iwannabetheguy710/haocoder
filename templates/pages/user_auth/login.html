@@ -10,21 +10,32 @@ Hảo Coder: Đăng nhập
 
 <div class="container">
 	<div class="row justify-content-lg-center">
-		<div class="col-9" style="font-size: 20px;">
-			<form id="login-form">
-				<div class="mb-3">
-					<label class="form-label">Tên đăng nhập (tên tài khoản)</label>
-					<input id="usr-name" type="text" class="form-control" placeholder="Tên đăng nhập của bạn">
+		<div class="col-7" style="font-size: 20px;">
+			<div style="border-radius: 24px; border: 2px solid #0D6EFD; background-color: #0D6EFD; color: white;">
+				<br>
+				<h2 style="text-align: center;">Đăng nhập</h2>
+				<br>
+				<div style="border-radius: 24px; border: none; background-color: white; color: black; padding: 30px;">
+					<form id="login-form">
+						<div class="mb-3">
+							<label class="form-label">Tên đăng nhập (tên tài khoản)</label>
+							<input id="usr-name" type="text" class="form-control" placeholder="Tên đăng nhập của bạn">
+						</div>
+						<div class="mb-3">
+							<label class="form-label">Mật khẩu</label>
+							<input id="usr-pass" type="password" class="form-control" placeholder="Mật khẩu">
+						</div>
+						<div id="login-err"></div>
+						<div class="text-center">
+							<button id="login-button" type="button" class="btn btn-primary" style="border: none; border-radius: 12px; height: 45px;">Đăng nhập</button>
+						</div>
+						<br>
+						<div class="text-center">
+							<a href="/register/" style="text-decoration: none; font-size: 16px;">Chưa có tài khoản ? Đăng ký ngay !</a>
+						</div>
+					</form>
 				</div>
-				<div class="mb-3">
-					<label class="form-label">Mật khẩu</label>
-					<input id="usr-pass" type="password" class="form-control" placeholder="Mật khẩu">
-				</div>
-				<div id="login-err"></div>
-				<div class="text-center">
-					<button id="login-button" type="button" class="btn btn-primary" style="border: none; border-radius: 12px; height: 45px;">Đăng nhập</button>
-				</div>
-			</form>
+			</div>
 		</div>
 	</div>
 </div>
